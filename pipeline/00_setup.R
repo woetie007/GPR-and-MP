@@ -121,7 +121,8 @@ par_map <- function(X, FUN) {
   on.exit(parallel::stopCluster(cl), add = TRUE)
   parallel::clusterExport(cl, ls(globalenv(), all.names = TRUE), envir = globalenv())
   parallel::clusterEvalQ(cl, {
-    source(file.path(PROJECT_DIR, "pipeline", "00_setup.R"))
+    use_utf8_locale()
+    source(file.path(PROJECT_DIR, "pipeline", "00_setup.R"), encoding = "UTF-8")
     NULL
   })
   parallel::parLapplyLB(cl, X, FUN)

@@ -85,6 +85,18 @@ STAGE_FILES <- c(
 #==========================================
 setwd(PROJECT_DIR)
 
+# Labels contain non-ASCII characters (the euro sign in "EONIA/EUR-STR").
+# Switch to a UTF-8 locale *before* sourcing any file so they are read and
+# written correctly (R on Windows >= 4.2 is UTF-8 already).
+use_utf8_locale <- function() {
+  if (!isTRUE(l10n_info()$`UTF-8`) && .Platform$OS.type != "windows") {
+    for (loc in c("C.UTF-8", "C.utf8", "en_US.UTF-8")) {
+      if (nzchar(suppressWarnings(Sys.setlocale("LC_CTYPE", loc)))) break
+    }
+  }
+}
+use_utf8_locale()
+
 # Install missing CRAN packages before anything else
 REQUIRED_PACKAGES <- c("dplyr", "tidyr", "readr", "lubridate", "ggplot2", "patchwork",
                        "sandwich", "urca", "strucchange", "dynlm", "FinTS", "moments",
@@ -104,7 +116,7 @@ if (length(missing_pkgs)) {
   }
 }
 
-source(file.path(PROJECT_DIR, "pipeline", "00_setup.R"))
+source(file.path(PROJECT_DIR, "pipeline", "00_setup.R"), encoding = "UTF-8")
 
 message("==============================================================")
 message(" GPR and MP pipeline")
@@ -116,7 +128,7 @@ message("==============================================================")
 timings <- data.frame(Stage = character(), Minutes = numeric())
 t_start <- Sys.time()
 
-source(file.path(PROJECT_DIR, "pipeline", "01_data.R"))
+source(file.path(PROJECT_DIR, "pipeline", "01_data.R"), encoding = "UTF-8")
 
 for (st in stages) {
   message("\n>>> Stage: ", st)
@@ -126,7 +138,7 @@ for (st in stages) {
   log_con <- file(log_file, open = "wt")
   sink(log_con, split = TRUE)
   tryCatch(
-    source(file.path(PROJECT_DIR, "pipeline", STAGE_FILES[[st]]), echo = FALSE),
+    source(file.path(PROJECT_DIR, "pipeline", STAGE_FILES[[st]]), echo = FALSE, encoding = "UTF-8"),
     finally = { sink(); close(log_con) }
   )
   mins <- as.numeric(difftime(Sys.time(), t0, units = "mins"))
