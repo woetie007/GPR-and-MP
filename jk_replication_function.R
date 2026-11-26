@@ -101,6 +101,9 @@ VAR_withiid <- function(Y, prior, gssettings) {
   it_save <- 0
   
   cat("Starting Gibbs Sampler...\n")
+  # X'X does not change across Gibbs iterations: compute it once
+  XtX <- crossprod(X_t)
+
   for (draw in 1:nalldraws) {
     
     # Draw Sigma
@@ -114,7 +117,7 @@ VAR_withiid <- function(Y, prior, gssettings) {
     C_sig <- t(chol(Sigma))
     Sig_yy_inv <- t(solve(C_sig[(Nm + 1):N, (Nm + 1):N])) %*% solve(C_sig[(Nm + 1):N, (Nm + 1):N])
     
-    A_var <- Q_inv + kronecker(Sig_yy_inv, crossprod(X_t))
+    A_var <- Q_inv + kronecker(Sig_yy_inv, XtX)
     
     y_st <- Y_t[, (Nm + 1):N] - Y_t[, 1:Nm] %*% solve(t(C_sig[1:Nm, 1:Nm])) %*% t(C_sig[(Nm + 1):N, 1:Nm])
     a_vec <- prior_QinvB + as.vector(crossprod(X_t, y_st) %*% Sig_yy_inv)
@@ -179,13 +182,16 @@ resirfssign <- function(res, nstep, dims, test_restr, b_normalize, max_attempts)
         Q[, toflip] <- -Q[, toflip]
       }
       
-      # Rotate the whole IRF array
-      respcand <- array(0, dim = c(N, N, nstep))
-      for(step in 1:nstep) {
-        respcand[, , step] <- irfchol[, , step] %*% Q
-      }
+      # The sign restrictions only involve impact responses: check them on
+      # the impact matrix first and rotate the whole IRF array only for an
+      # accepted candidate (same draws and results, far fewer matrix products)
+      impactcand <- array(irfchol[, , 1] %*% Q, dim = c(N, N, 1))
       
-      if (test_restr(respcand)) {
+      if (test_restr(impactcand)) {
+        respcand <- array(0, dim = c(N, N, nstep))
+        for(step in 1:nstep) {
+          respcand[, , step] <- irfchol[, , step] %*% Q
+        }
         irfs_draws[, , , i] <- respcand
         success <- TRUE
         break
