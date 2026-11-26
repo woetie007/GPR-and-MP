@@ -123,7 +123,8 @@ VAR_withiid <- function(Y, prior, gssettings) {
     a_vec <- prior_QinvB + as.vector(crossprod(X_t, y_st) %*% Sig_yy_inv)
     
     C_var <- chol(A_var)
-    B_vec <- solve(C_var, solve(t(C_var), a_vec) + rnorm(K * Ny))
+    # C_var is upper triangular: triangular solves (O(n^2)) instead of solve() (O(n^3))
+    B_vec <- backsolve(C_var, backsolve(C_var, a_vec, transpose = TRUE) + rnorm(K * Ny))
     BB[, (Nm + 1):N] <- matrix(B_vec, nrow = K, ncol = Ny)
     
     # Save draws
