@@ -450,8 +450,7 @@ regime_panel <- function(yvar, colour, title, ylab, xlab = NULL, show_x = FALSE)
 p_ip <- regime_panel("IP_Index", "forestgreen",
                      "Industrial Production (IP), Headline Inflation (HICP) Policy Rate, Euro Area",
                      "IP (Index)") +
-  theme(legend.position = "inside",
-        legend.position.inside = c(0.15, 0.85),
+  theme(legend.position = c(0.15, 0.85),
         legend.title = element_blank(),
         legend.background = element_rect(fill = "white", color = "black"))
 p_hicp <- regime_panel("df_HICP", "mediumblue", "HICP (Headline Inflation)", "HICP (%)")

@@ -20,6 +20,7 @@
 #   Rscript run_pipeline.R --download            # rebuild data from the web
 #   Rscript run_pipeline.R --cores=2             # cores for the BVARs
 #   Rscript run_pipeline.R VAR --models=Figure1_STBVAR_Baseline
+#   Rscript run_pipeline.R shocks --exo-lags=2     # 2-lag exogeneity test
 #
 # Stages: descriptive, unit_root, shocks, VAR, LP
 ###############################################################################
@@ -34,15 +35,28 @@ get_value <- function(key, default) {
 #==========================================
 # Configuration
 #==========================================
+# Project folder: the folder of this script (Rscript or source()), otherwise
+# the working directory (e.g. the RStudio project folder)
 PROJECT_DIR <- local({
   f <- grep("^--file=", commandArgs(FALSE), value = TRUE)
-  if (length(f)) normalizePath(dirname(sub("^--file=", "", f[1]))) else getwd()
+  if (length(f)) return(normalizePath(dirname(sub("^--file=", "", f[1]))))
+  for (i in rev(seq_len(sys.nframe()))) {
+    of <- sys.frame(i)$ofile
+    if (!is.null(of)) return(normalizePath(dirname(of)))
+  }
+  getwd()
 })
+if (!file.exists(file.path(PROJECT_DIR, "pipeline", "00_setup.R"))) {
+  stop("Cannot find pipeline/00_setup.R in ", PROJECT_DIR,
+       ". Run the script from the project folder (open the .Rproj or use setwd()).")
+}
 
 DATA_SOURCE <- if (get_flag("--download")) "download" else "frozen"
 FIG_FORMATS <- strsplit(get_value("--formats", "png,pdf"), ",")[[1]]
 SEED        <- as.integer(get_value("--seed", "20250101"))
-N_CORES     <- as.integer(get_value("--cores", max(1, parallel::detectCores() - 0)))
+# Default: all cores but one, at most 8 (each BVAR worker needs a few hundred MB)
+N_CORES     <- as.integer(get_value("--cores", max(1, min(8, parallel::detectCores() - 1))))
+EXO_LAGS    <- as.integer(get_value("--exo-lags", "1"))  # 1 = thesis Table A4
 VAR_MODELS  <- { m <- get_value("--models", ""); if (nzchar(m)) strsplit(m, ",")[[1]] else NULL }
 
 # Gibbs sampler: thesis setting is 4000 burn-in and 4000 saved draws (every 4th)
@@ -70,6 +84,26 @@ STAGE_FILES <- c(
 # Run
 #==========================================
 setwd(PROJECT_DIR)
+
+# Install missing CRAN packages before anything else
+REQUIRED_PACKAGES <- c("dplyr", "tidyr", "readr", "lubridate", "ggplot2", "patchwork",
+                       "sandwich", "urca", "strucchange", "dynlm", "FinTS", "moments",
+                       "xtable", "knitr", "kableExtra", "gt", "stargazer", "corrplot")
+missing_pkgs <- REQUIRED_PACKAGES[!vapply(REQUIRED_PACKAGES, requireNamespace,
+                                          logical(1), quietly = TRUE)]
+if (length(missing_pkgs)) {
+  message("Installing missing packages: ", paste(missing_pkgs, collapse = ", "))
+  repos <- getOption("repos")
+  if (is.null(repos) || any(repos == "@CRAN@")) repos <- "https://cloud.r-project.org"
+  install.packages(missing_pkgs, repos = repos)
+  still_missing <- missing_pkgs[!vapply(missing_pkgs, requireNamespace, logical(1),
+                                        quietly = TRUE)]
+  if (length(still_missing)) {
+    stop("Could not install: ", paste(still_missing, collapse = ", "),
+         ". Install them manually and rerun.")
+  }
+}
+
 source(file.path(PROJECT_DIR, "pipeline", "00_setup.R"))
 
 message("==============================================================")

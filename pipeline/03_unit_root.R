@@ -153,11 +153,12 @@ run_ur_tests <- function(s) {
   res
 }
 
-ur_results <- list()
-for (s in ur_spec) {
-  message("  unit root tests: ", s$label)
-  ur_results[[s$id]] <- run_ur_tests(s)
-}
+# The tests are deterministic, so running the series in parallel gives the
+# same results; the two-break Lee-Strazicich grid search dominates run time.
+message(sprintf("  running unit root tests for %d series on %d cores ...",
+                length(ur_spec), N_CORES))
+ur_results <- par_map(ur_spec, run_ur_tests)
+names(ur_results) <- sapply(ur_spec, `[[`, "id")
 
 #==========================================
 # Tables (original xtable layout)

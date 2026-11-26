@@ -320,18 +320,8 @@ run_job <- function(j) {
 
 message(sprintf("  estimating %d BVAR models on %d cores (burn-in %d, %d draws)...",
                 length(jobs), N_CORES, BVAR_BURNIN, BVAR_NDRAWS))
-if (N_CORES > 1 && .Platform$OS.type == "unix") {
-  var_results <- parallel::mclapply(jobs, run_job, mc.cores = N_CORES,
-                                    mc.preschedule = FALSE)
-} else {
-  var_results <- lapply(jobs, run_job)
-}
+var_results <- par_map(jobs, run_job)
 names(var_results) <- sapply(jobs, `[[`, "file")
-failed <- vapply(var_results, inherits, logical(1), what = "try-error")
-if (any(failed)) {
-  stop("BVAR estimation failed for: ", paste(names(var_results)[failed], collapse = ", "),
-       "\n", paste(unlist(var_results[failed]), collapse = "\n"))
-}
 
 #==============================================================================
 # Figures and IRF data
