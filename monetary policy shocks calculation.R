@@ -2,7 +2,10 @@
 # EA-MPD adjustment code with Martin Baumgaertner package
 ##########################################################
 
-devtools::install_github("https://github.com/martinbaumgaertner/hfdshocks.git")
+if (!requireNamespace("hfdshocks", quietly = TRUE)) {
+  devtools::install_github("https://github.com/martinbaumgaertner/hfdshocks.git")
+}
+library(hfdshocks)
 EA_MPD <- read_excel("EA-MPD.xlsx", col_types = c("date", 
                                                   "numeric", "numeric", "numeric", "numeric", 
                                                   "numeric", "numeric", "numeric", "numeric", 
