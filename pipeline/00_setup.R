@@ -109,6 +109,24 @@ with_log <- function(path, expr) {
   force(expr)
 }
 
+# Apply FUN over X on N_CORES worker processes (socket cluster: works on
+# Windows, macOS and Linux, and avoids the fork + multithreaded-BLAS deadlock
+# of mclapply). Workers load the packages and get a copy of the global
+# environment, so every function and object defined so far is available.
+# Each task sets its own seed, so results do not depend on the worker count.
+par_map <- function(X, FUN) {
+  n <- min(N_CORES, length(X))
+  if (n <= 1) return(lapply(X, FUN))
+  cl <- parallel::makeCluster(n)
+  on.exit(parallel::stopCluster(cl), add = TRUE)
+  parallel::clusterExport(cl, ls(globalenv(), all.names = TRUE), envir = globalenv())
+  parallel::clusterEvalQ(cl, {
+    source(file.path(PROJECT_DIR, "pipeline", "00_setup.R"))
+    NULL
+  })
+  parallel::parLapplyLB(cl, X, FUN)
+}
+
 # Format a vector of ts-time break dates as "YYYY:Mmm" (as in thesis Table A2)
 format_ym <- function(t) {
   yr <- floor(t + 1e-8)
