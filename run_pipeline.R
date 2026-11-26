@@ -20,6 +20,7 @@
 #   Rscript run_pipeline.R --download            # rebuild data from the web
 #   Rscript run_pipeline.R --cores=2             # cores for the BVARs
 #   Rscript run_pipeline.R VAR --models=Figure1_STBVAR_Baseline
+#   Rscript run_pipeline.R shocks --exo-lags=2     # 2-lag exogeneity test
 #
 # Stages: descriptive, unit_root, shocks, VAR, LP
 ###############################################################################
@@ -43,6 +44,7 @@ DATA_SOURCE <- if (get_flag("--download")) "download" else "frozen"
 FIG_FORMATS <- strsplit(get_value("--formats", "png,pdf"), ",")[[1]]
 SEED        <- as.integer(get_value("--seed", "20250101"))
 N_CORES     <- as.integer(get_value("--cores", max(1, parallel::detectCores() - 0)))
+EXO_LAGS    <- as.integer(get_value("--exo-lags", "1"))  # 1 = thesis Table A4
 VAR_MODELS  <- { m <- get_value("--models", ""); if (nzchar(m)) strsplit(m, ",")[[1]] else NULL }
 
 # Gibbs sampler: thesis setting is 4000 burn-in and 4000 saved draws (every 4th)

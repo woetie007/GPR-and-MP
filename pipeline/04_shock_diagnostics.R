@@ -41,7 +41,13 @@ shock_spec <- list(
   QE_Shock     = list(label = "QE Shock",     ar = 0, adf_lags = 0)
 )
 
-exo_formula_rhs <- "L(IP, 1) + L(IP, 2) + L(HICP, 1) + L(HICP, 2) + L(Oil_prices, 1) + L(Oil_prices, 2) + L(EONIA_1Y, 1) + L(EONIA_1Y, 2)"
+# Exogeneity regressions on lagged IP, HICP, oil prices and the EONIA 1Y rate.
+# EXO_LAGS = 1 reproduces thesis Table A4; shock_analysis_and_purging.R was
+# later changed to 2 lags (run with --exo-lags=2 for that version).
+exo_formula_rhs <- paste(
+  sapply(c("IP", "HICP", "Oil_prices", "EONIA_1Y"),
+         function(v) paste(sprintf("L(%s, %d)", v, seq_len(EXO_LAGS)), collapse = " + ")),
+  collapse = " + ")
 
 shock_res <- list()
 for (nm in names(shock_spec)) {
@@ -77,7 +83,7 @@ for (nm in names(shock_spec)) {
     exo <- dynlm(as.formula(paste(nm, "~", exo_formula_rhs)), data = ts_data)
     fs  <- summary(exo)$fstatistic
     r$exo_p <- pf(fs[1], fs[2], fs[3], lower.tail = FALSE)
-    cat("\n--- Exogeneity regression on lagged IP, HICP, Oil, EONIA 1Y ---\n")
+    cat(sprintf("\n--- Exogeneity regression on %d lag(s) of IP, HICP, Oil, EONIA 1Y ---\n", EXO_LAGS))
     print(summary(exo))
     cat(s$label, "exogeneity p-value:", r$exo_p, "\n")
   })
@@ -112,8 +118,11 @@ lb_panel <- function(ids, panel_title) {
   for (nm in ids) {
     lb <- shock_res[[nm]]$lb
     wide[[paste0(shock_spec[[nm]]$label, " Stat")]]    <- sprintf("%.3f", lb$`Ljung-Box`)
-    wide[[paste0(shock_spec[[nm]]$label, " p-value")]] <- ifelse(
-      lb$`p-value` == "<0.0001", "$<$0.0001", sprintf("%.4f", as.numeric(lb$`p-value`)))
+    pv <- lb$`p-value`
+    small <- pv == "<0.0001"
+    pv_fmt <- rep("$<$0.0001", length(pv))
+    pv_fmt[!small] <- sprintf("%.4f", as.numeric(pv[!small]))
+    wide[[paste0(shock_spec[[nm]]$label, " p-value")]] <- pv_fmt
   }
   hdr <- c(" " = 1, setNames(rep(2, length(ids)), sapply(shock_spec[ids], `[[`, "label")))
   kbl(wide, format = "latex", booktabs = TRUE, escape = FALSE, align = "c",

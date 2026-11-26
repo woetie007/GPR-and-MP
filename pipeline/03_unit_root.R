@@ -153,10 +153,21 @@ run_ur_tests <- function(s) {
   res
 }
 
-ur_results <- list()
-for (s in ur_spec) {
-  message("  unit root tests: ", s$label)
-  ur_results[[s$id]] <- run_ur_tests(s)
+# The tests are deterministic, so running the series in parallel gives the
+# same results; the two-break Lee-Strazicich grid search dominates run time.
+message(sprintf("  running unit root tests for %d series on %d cores ...",
+                length(ur_spec), N_CORES))
+if (N_CORES > 1 && .Platform$OS.type == "unix") {
+  ur_results <- parallel::mclapply(ur_spec, run_ur_tests, mc.cores = N_CORES,
+                                   mc.preschedule = FALSE)
+} else {
+  ur_results <- lapply(ur_spec, run_ur_tests)
+}
+names(ur_results) <- sapply(ur_spec, `[[`, "id")
+failed <- vapply(ur_results, inherits, logical(1), what = "try-error")
+if (any(failed)) {
+  stop("Unit root tests failed for: ", paste(names(ur_results)[failed], collapse = ", "),
+       "\n", paste(unlist(ur_results[failed]), collapse = "\n"))
 }
 
 #==========================================
