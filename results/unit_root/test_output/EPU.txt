@@ -1,0 +1,170 @@
+=====================================================
+ Unit root testing: EPU 
+ Sample: 2000:M02 - 2025:M12 (T = 311)
+=====================================================
+
+--- AR lag selection (CSS, Pmax = 15), sorted by BIC ---
+  p q      AIC      BIC      RSS SampleSize Method
+1 4 0 3513.154 3531.606 137996.1        296    CSS
+2 2 0 3523.929 3535.000 145058.9        296    CSS
+3 5 0 3514.685 3536.827 137777.5        296    CSS
+4 3 0 3522.331 3537.093 143306.4        296    CSS
+5 6 0 3515.882 3541.715 137404.3        296    CSS
+
+--- Ljung-Box on AR(4) residuals ---
+
+========================
+   lag Ljung-Box p-value
+------------------------
+1   1    0.007          
+2   2    0.095          
+3   3    0.237          
+4   4    0.814          
+5   5    1.763    0.881 
+6   6    1.770    0.940 
+7   7    1.960    0.962 
+8   8    5.101    0.747 
+9   9    5.115    0.824 
+10 10    5.246    0.874 
+11 11    6.069    0.869 
+12 12   10.487    0.573 
+13 13   12.689    0.472 
+14 14   13.185    0.512 
+15 15   14.527    0.486 
+16 16   15.760    0.470 
+17 17   15.834    0.536 
+18 18   22.214    0.223 
+19 19   22.238    0.273 
+20 20   23.083    0.285 
+------------------------
+
+--- ADF(3), type = trend ---
+
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression trend 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 + 1 + tt + z.diff.lag)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-63.653 -11.612  -1.312  11.500 101.124 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 85.72309   20.16848   4.250 2.85e-05 ***
+z.lag.1     -0.19554    0.04605  -4.247 2.89e-05 ***
+tt           0.09638    0.02627   3.669 0.000288 ***
+z.diff.lag1 -0.18982    0.06255  -3.035 0.002619 ** 
+z.diff.lag2 -0.10445    0.06112  -1.709 0.088490 .  
+z.diff.lag3 -0.13694    0.05721  -2.394 0.017291 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 21.23 on 301 degrees of freedom
+Multiple R-squared:  0.1709,	Adjusted R-squared:  0.1571 
+F-statistic: 12.41 on 5 and 301 DF,  p-value: 5.849e-11
+
+
+Value of test-statistic is: -4.2467 6.1946 9.0205 
+
+Critical values for test statistics: 
+      1pct  5pct 10pct
+tau3 -3.98 -3.42 -3.13
+phi2  6.15  4.71  4.05
+phi3  8.34  6.30  5.36
+
+
+--- Bai-Perron (h = 0.15) ---
+
+	 Optimal (m+1)-segment partition: 
+
+Call:
+breakpoints.formula(formula = y ~ 1, h = 0.15)
+
+Breakpoints at observation number:
+                          
+m = 1          122        
+m = 2          122     265
+m = 3          119 191 265
+m = 4   54 103     191 265
+m = 5   46 92  138 191 265
+
+Corresponding to breakdates:
+                                                  
+m = 1                    2010(3)                  
+m = 2                    2010(3)           2022(2)
+m = 3                    2009(12) 2015(12) 2022(2)
+m = 4   2004(7)  2008(8)          2015(12) 2022(2)
+m = 5   2003(11) 2007(9) 2011(7)  2015(12) 2022(2)
+
+Fit:
+                                             
+m   0      1      2      3      4      5     
+RSS 898612 380251 265940 239601 227450 222002
+BIC   3372   3116   3017   2996   2991   2995
+
+--- Zivot-Andrews (model = both, lag = 2) ---
+
+################################ 
+# Zivot-Andrews Unit Root Test # 
+################################ 
+
+
+Call:
+lm(formula = testmat)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-56.436 -12.812  -1.833  12.206  89.896 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 129.62524   21.40795   6.055 4.18e-09 ***
+y.l1          0.68526    0.04840  14.159  < 2e-16 ***
+trend         1.01056    0.35878   2.817 0.005173 ** 
+y.dl1        -0.11858    0.05995  -1.978 0.048853 *  
+y.dl2        -0.03572    0.05627  -0.635 0.526057    
+du          -31.43634    8.09276  -3.884 0.000126 ***
+dt           -0.82408    0.35042  -2.352 0.019334 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 20.87 on 301 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.8508,	Adjusted R-squared:  0.8478 
+F-statistic:   286 on 6 and 301 DF,  p-value: < 2.2e-16
+
+
+Teststatistic: -6.5031 
+Critical values: 0.01= -5.57 0.05= -5.08 0.1= -4.82 
+
+Potential break point at position: 39 
+
+
+--- Lee-Strazicich, 2 breaks, model = crash, GTOS ---
+[1] -4.548561
+[1] "First possible structural break at position: 70"
+[1] "The location of the first break - lambda_1: 0.2 , with the number of total observations: 311"
+[1] "Second possible structural break at position: 91"
+[1] "The location of the second break - lambda_2: 0.3 , with the number of total observations: 311"
+Critical values:
+              Break 2 - 0.4 - 1% Break 2 - 0.4 - 5% Break 2 - 0.4 - 10%
+Break 1 - 0.2              -6.16              -5.59               -5.27
+Break 1 - 0.4                 NA                 NA                  NA
+Break 1 - 0.6                 NA                 NA                  NA
+              Break 2 - 0.6 - 1% Break 2 - 0.6 - 5% Break 2 - 0.6 - 10%
+Break 1 - 0.2              -6.41              -5.74               -5.32
+Break 1 - 0.4              -6.45              -5.67               -5.31
+Break 1 - 0.6                 NA                 NA                  NA
+              Break 2 - 0.8 - 1% Break 2 - 0.8 - 5% Break 2 - 0.8 - 10%
+Break 1 - 0.2              -6.33              -5.71               -5.33
+Break 1 - 0.4              -6.42              -5.65               -5.32
+Break 1 - 0.6              -6.32              -5.73               -5.32
+[1] "Number of lags determined by general-to-specific lag selection: 3"
+Runtime:
+Time difference of 1.611849 mins

@@ -1,0 +1,130 @@
+=====================================================
+ Unit root testing: ESI 
+ Sample: 2000:M02 - 2025:M12 (T = 311)
+=====================================================
+
+--- AR lag selection (CSS, Pmax = 15), sorted by BIC ---
+  p q      AIC      BIC      RSS SampleSize Method
+1 2 0 2282.455 2293.526 2187.963        296    CSS
+2 3 0 2281.706 2296.468 2167.739        296    CSS
+3 4 0 2283.041 2301.493 2162.875        296    CSS
+4 5 0 2285.041 2307.183 2162.871        296    CSS
+5 6 0 2287.034 2312.866 2162.819        296    CSS
+
+--- Ljung-Box on AR(2) residuals ---
+
+========================
+   lag Ljung-Box p-value
+------------------------
+1   1    0.320          
+2   2    2.712          
+3   3    2.766    0.429 
+4   4    2.816    0.589 
+5   5    3.193    0.670 
+6   6    4.277    0.639 
+7   7    9.889    0.195 
+8   8   10.535    0.230 
+9   9   11.586    0.238 
+10 10   12.340    0.263 
+11 11   13.013    0.292 
+12 12   13.013    0.368 
+13 13   13.792    0.389 
+14 14   14.781    0.393 
+15 15   15.782    0.397 
+16 16   15.950    0.456 
+17 17   16.358    0.499 
+18 18   17.735    0.473 
+19 19   17.774    0.537 
+20 20   17.816    0.600 
+------------------------
+
+--- ADF(1), type = trend ---
+
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression trend 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 + 1 + tt + z.diff.lag)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-32.010  -0.751   0.129   1.003  14.964 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  6.0953182  1.5955952   3.820 0.000162 ***
+z.lag.1     -0.0624904  0.0156258  -3.999 7.98e-05 ***
+tt           0.0006306  0.0017268   0.365 0.715231    
+z.diff.lag   0.3519813  0.0532170   6.614 1.67e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.706 on 305 degrees of freedom
+Multiple R-squared:  0.1509,	Adjusted R-squared:  0.1425 
+F-statistic: 18.07 on 3 and 305 DF,  p-value: 8.103e-11
+
+
+Value of test-statistic is: -3.9992 5.4261 8.0849 
+
+Critical values for test statistics: 
+      1pct  5pct 10pct
+tau3 -3.98 -3.42 -3.13
+phi2  6.15  4.71  4.05
+phi3  8.34  6.30  5.36
+
+
+--- Bai-Perron (h = 0.15) ---
+
+	 Optimal (m+1)-segment partition: 
+
+Call:
+breakpoints.formula(formula = y ~ 1, h = 0.15)
+
+Breakpoints at observation number:
+                          
+m = 1      98             
+m = 2      100 165        
+m = 3      100 180     241
+m = 4   54 100 180     241
+m = 5   54 100 163 209 265
+
+Corresponding to breakdates:
+                                                
+m = 1           2008(3)                         
+m = 2           2008(5) 2013(10)                
+m = 3           2008(5) 2015(1)          2020(2)
+m = 4   2004(7) 2008(5) 2015(1)          2020(2)
+m = 5   2004(7) 2008(5) 2013(8)  2017(6) 2022(2)
+
+Fit:
+                                       
+m   0     1     2     3     4     5    
+RSS 30851 29302 23380 21274 20895 21208
+BIC  2324  2319  2260  2243  2248  2265
+
+--- Lee-Strazicich, 2 breaks, model = crash, GTOS ---
+[1] -3.63168
+[1] "First possible structural break at position: 163"
+[1] "The location of the first break - lambda_1: 0.5 , with the number of total observations: 311"
+[1] "Second possible structural break at position: 266"
+[1] "The location of the second break - lambda_2: 0.9 , with the number of total observations: 311"
+Critical values:
+              Break 2 - 0.4 - 1% Break 2 - 0.4 - 5% Break 2 - 0.4 - 10%
+Break 1 - 0.2              -6.16              -5.59               -5.27
+Break 1 - 0.4                 NA                 NA                  NA
+Break 1 - 0.6                 NA                 NA                  NA
+              Break 2 - 0.6 - 1% Break 2 - 0.6 - 5% Break 2 - 0.6 - 10%
+Break 1 - 0.2              -6.41              -5.74               -5.32
+Break 1 - 0.4              -6.45              -5.67               -5.31
+Break 1 - 0.6                 NA                 NA                  NA
+              Break 2 - 0.8 - 1% Break 2 - 0.8 - 5% Break 2 - 0.8 - 10%
+Break 1 - 0.2              -6.33              -5.71               -5.33
+Break 1 - 0.4              -6.42              -5.65               -5.32
+Break 1 - 0.6              -6.32              -5.73               -5.32
+[1] "Number of lags determined by general-to-specific lag selection: 9"
+Runtime:
+Time difference of 2.098015 mins

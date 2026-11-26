@@ -1,0 +1,133 @@
+=====================================================
+ Shock diagnostics: OIS 1Y 
+=====================================================
+
+--- AR lag selection (CSS, Pmax = 15), sorted by BIC ---
+  p q      AIC      BIC      RSS SampleSize Method
+1 2 0 2537.534 2548.615 5032.560        297    CSS
+2 3 0 2538.498 2553.272 5015.026        297    CSS
+3 4 0 2537.946 2556.415 4972.133        297    CSS
+4 5 0 2534.363 2556.526 4879.534        297    CSS
+5 6 0 2535.278 2561.134 4861.734        297    CSS
+
+--- Ljung-Box on AR(2) residuals ---
+
+========================
+   lag Ljung-Box p-value
+------------------------
+1   1    0.076          
+2   2    0.124          
+3   3    0.127    0.989 
+4   4    3.008    0.556 
+5   5    5.271    0.384 
+6   6    9.662    0.140 
+7   7    9.667    0.208 
+8   8    9.667    0.289 
+9   9    9.902    0.358 
+10 10   10.015    0.439 
+11 11   10.384    0.496 
+12 12   11.333    0.501 
+13 13   11.512    0.568 
+14 14   11.710    0.629 
+15 15   11.973    0.681 
+16 16   12.949    0.676 
+17 17   12.965    0.739 
+18 18   12.980    0.793 
+19 19   12.984    0.839 
+20 20   12.985    0.878 
+------------------------
+
+--- ADF(1), type = trend ---
+
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression trend 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 + 1 + tt + z.diff.lag)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.3626  -1.3960  -0.2488   1.4507  19.6421 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.3071209  0.4829726   0.636    0.525    
+z.lag.1     -1.4568720  0.0850390 -17.132  < 2e-16 ***
+tt          -0.0005575  0.0026765  -0.208    0.835    
+z.diff.lag   0.2321934  0.0551638   4.209 3.37e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.216 on 306 degrees of freedom
+Multiple R-squared:  0.6164,	Adjusted R-squared:  0.6127 
+F-statistic: 163.9 on 3 and 306 DF,  p-value: < 2.2e-16
+
+
+Value of test-statistic is: -17.1318 97.8463 146.764 
+
+Critical values for test statistics: 
+      1pct  5pct 10pct
+tau3 -3.98 -3.42 -3.13
+phi2  6.15  4.71  4.05
+phi3  8.34  6.30  5.36
+
+
+--- Ljung-Box on the raw series (lags 1-12) ---
+
+=========================
+   lag Ljung-Box p-value 
+-------------------------
+1   1   10.942    9e-04  
+2   2   22.373   < 0.0001
+3   3   27.595   < 0.0001
+4   4   28.405   < 0.0001
+5   5   32.790   < 0.0001
+6   6   39.022   < 0.0001
+7   7   39.072   < 0.0001
+8   8   39.297   < 0.0001
+9   9   39.854   < 0.0001
+10 10   39.943   < 0.0001
+11 11   40.544   < 0.0001
+12 12   41.596   < 0.0001
+-------------------------
+
+--- ARCH-LM (6 lags) ---
+
+	ARCH LM-test; Null hypothesis: no ARCH effects
+
+data:  y
+Chi-squared = 49.896, df = 6, p-value = 4.932e-09
+
+
+--- Exogeneity regression on 1 lag(s) of IP, HICP, Oil, EONIA 1Y ---
+
+Time series regression with "ts" data:
+Start = 2000(3), End = 2025(13)
+
+Call:
+dynlm(formula = as.formula(paste(nm, "~", exo_formula_rhs)), 
+    data = ts_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-17.3492  -1.3244  -0.3811   1.1925  20.9509 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(>|t|)  
+(Intercept)      -16.748006  24.126825  -0.694   0.4881  
+L(IP, 1)           0.047219   0.059520   0.793   0.4282  
+L(HICP, 1)         0.001056   0.024256   0.044   0.9653  
+L(Oil_prices, 1)  -0.011972   0.006688  -1.790   0.0744 .
+L(EONIA_1Y, 1)    -0.111782   0.160338  -0.697   0.4862  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.416 on 306 degrees of freedom
+Multiple R-squared:  0.01184,	Adjusted R-squared:  -0.001075 
+F-statistic: 0.9168 on 4 and 306 DF,  p-value: 0.4544
+
+OIS 1Y exogeneity p-value: 0.4543617 
