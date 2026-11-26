@@ -61,7 +61,7 @@ z.lag.1     -0.0624904  0.0156258  -3.999 7.98e-05 ***
 tt           0.0006306  0.0017268   0.365 0.715231    
 z.diff.lag   0.3519813  0.0532170   6.614 1.67e-10 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 2.706 on 305 degrees of freedom
 Multiple R-squared:  0.1509,	Adjusted R-squared:  0.1425 
@@ -127,4 +127,4 @@ Break 1 - 0.4              -6.42              -5.65               -5.32
 Break 1 - 0.6              -6.32              -5.73               -5.32
 [1] "Number of lags determined by general-to-specific lag selection: 9"
 Runtime:
-Time difference of 2.098015 mins
+Time difference of 2.096353 mins

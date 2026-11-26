@@ -62,7 +62,7 @@ z.diff.lag1  0.183270   0.110182   1.663   0.0973 .
 z.diff.lag2  0.023599   0.084327   0.280   0.7798    
 z.diff.lag3  0.131937   0.056713   2.326   0.0207 *  
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 3.493 on 302 degrees of freedom
 Multiple R-squared:  0.5776,	Adjusted R-squared:  0.5706 
@@ -126,7 +126,7 @@ L(HICP, 1)         0.007611   0.019648   0.387   0.6988
 L(Oil_prices, 1)  -0.012627   0.005418  -2.331   0.0204 *
 L(EONIA_1Y, 1)    -0.008680   0.129879  -0.067   0.9468  
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 3.577 on 306 degrees of freedom
 Multiple R-squared:  0.01952,	Adjusted R-squared:  0.0067 

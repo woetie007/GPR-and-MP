@@ -95,7 +95,7 @@ z.diff.lag6  1.058e-01  5.826e-02   1.815  0.07051 .
 z.diff.lag7  2.148e-02  5.797e-02   0.371  0.71121   
 z.diff.lag8  1.649e-01  5.804e-02   2.841  0.00482 **
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.306 on 291 degrees of freedom
 Multiple R-squared:  0.1791,	Adjusted R-squared:  0.1509 
@@ -140,7 +140,7 @@ z.diff.lag6  0.104463   0.057942   1.803  0.07244 .
 z.diff.lag7  0.019792   0.057496   0.344  0.73091   
 z.diff.lag8  0.163032   0.057497   2.835  0.00490 **
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.3056 on 292 degrees of freedom
 Multiple R-squared:  0.179,	Adjusted R-squared:  0.1537 
@@ -183,7 +183,7 @@ z.diff.lag6  0.104503   0.057862   1.806  0.07194 .
 z.diff.lag7  0.019650   0.057417   0.342  0.73242   
 z.diff.lag8  0.162803   0.057416   2.835  0.00489 **
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.3051 on 293 degrees of freedom
 Multiple R-squared:  0.179,	Adjusted R-squared:  0.1538 
@@ -250,7 +250,7 @@ y.dl2        0.1096472  0.0554500   1.977 0.048908 *
 du           0.9327011  0.1323527   7.047 1.25e-11 ***
 dt          -0.0129305  0.0041350  -3.127 0.001938 ** 
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.2982 on 301 degrees of freedom
   (3 observations deleted due to missingness)
@@ -285,4 +285,4 @@ Break 1 - 0.4              -6.42              -5.65               -5.32
 Break 1 - 0.6              -6.32              -5.73               -5.32
 [1] "Number of lags determined by general-to-specific lag selection: 16"
 Runtime:
-Time difference of 1.214804 mins
+Time difference of 1.277093 mins

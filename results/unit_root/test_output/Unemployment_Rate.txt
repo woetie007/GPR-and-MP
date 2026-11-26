@@ -67,7 +67,7 @@ z.diff.lag5 -5.652e-02  6.289e-02  -0.899  0.36952
 z.diff.lag6  8.521e-02  5.932e-02   1.436  0.15199    
 z.diff.lag7  1.567e-01  5.736e-02   2.732  0.00668 ** 
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.0786 on 293 degrees of freedom
 Multiple R-squared:  0.3954,	Adjusted R-squared:  0.3769 
@@ -111,7 +111,7 @@ z.diff.lag5 -0.055364   0.063027  -0.878  0.38043
 z.diff.lag6  0.085731   0.059456   1.442  0.15039    
 z.diff.lag7  0.155603   0.057480   2.707  0.00718 ** 
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.07878 on 294 degrees of freedom
 Multiple R-squared:  0.3907,	Adjusted R-squared:  0.3741 
@@ -153,7 +153,7 @@ z.diff.lag5 -0.0581114  0.0631295  -0.921   0.3581
 z.diff.lag6  0.0790888  0.0594104   1.331   0.1841    
 z.diff.lag7  0.1450280  0.0571562   2.537   0.0117 *  
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.07894 on 295 degrees of freedom
 Multiple R-squared:  0.3913,	Adjusted R-squared:  0.3748 
@@ -220,7 +220,7 @@ y.dl2        0.3288121  0.0524263   6.272 1.24e-09 ***
 du           0.1093428  0.0254374   4.298 2.33e-05 ***
 dt          -0.0002073  0.0002892  -0.717   0.4741    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.07698 on 301 degrees of freedom
   (3 observations deleted due to missingness)
@@ -255,4 +255,4 @@ Break 1 - 0.4              -6.42              -5.65               -5.32
 Break 1 - 0.6              -6.32              -5.73               -5.32
 [1] "Number of lags determined by general-to-specific lag selection: 8"
 Runtime:
-Time difference of 2.06593 mins
+Time difference of 2.036171 mins

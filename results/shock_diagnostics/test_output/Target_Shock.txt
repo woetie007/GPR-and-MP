@@ -61,7 +61,7 @@ tt           0.004688   0.002208   2.123 0.034535 *
 z.diff.lag1  0.440180   0.091213   4.826 2.21e-06 ***
 z.diff.lag2  0.196411   0.055744   3.523 0.000491 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 3.418 on 304 degrees of freedom
 Multiple R-squared:  0.6599,	Adjusted R-squared:  0.6555 

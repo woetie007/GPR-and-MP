@@ -59,7 +59,7 @@ Coefficients:
 z.lag.1     -0.9613844  0.0568633 -16.907   <2e-16 ***
 tt           0.0007034  0.0012757   0.551    0.582    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 2.018 on 308 degrees of freedom
 Multiple R-squared:  0.4814,	Adjusted R-squared:  0.478 
