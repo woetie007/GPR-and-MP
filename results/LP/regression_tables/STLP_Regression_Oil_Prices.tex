@@ -1,0 +1,37 @@
+\begin{table}[!h]
+\centering
+\caption{\label{tab:stlp_oil_prices}State-dependent local projection: response of Oil Prices to a pure MP shock}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Horizon (months after the shock)} \\
+\cmidrule(l{3pt}r{3pt}){2-7}
+ & $h=0$ & $h=3$ & $h=6$ & $h=12$ & $h=18$ & $h=24$\\
+\midrule
+Shock $\times F_{t-1}$ (High GPR) & -2.091$^{**}$ & -1.120 & 0.474 & -1.460 & 0.401 & 6.761$^{***}$\\
+ & (0.846) & (1.832) & (2.533) & (2.544) & (2.414) & (2.487)\\
+Shock $\times (1-F_{t-1})$ (Low GPR) & -3.367$^{*}$ & 2.900$^{**}$ & 2.472 & 3.851 & 4.791$^{*}$ & 8.026$^{**}$\\
+ & (1.906) & (1.387) & (1.784) & (2.599) & (2.871) & (3.497)\\
+Difference High $-$ Low & 1.276 & -4.020$^{*}$ & -1.998 & -5.311 & -4.390 & -1.266\\
+ & (2.179) & (2.126) & (2.943) & (3.736) & (3.253) & (4.017)\\
+$F_{t-1}$ (High-GPR constant) & 16.425$^{***}$ & 53.801$^{***}$ & 92.940$^{***}$ & 162.115$^{***}$ & 238.393$^{***}$ & 287.374$^{***}$\\
+ & (6.119) & (15.432) & (25.419) & (42.848) & (51.491) & (40.979)\\
+$1-F_{t-1}$ (Low-GPR constant) & 25.646 & 109.716$^{***}$ & 192.763$^{***}$ & 326.704$^{***}$ & 410.335$^{***}$ & 513.970$^{***}$\\
+ & (17.045) & (29.343) & (49.240) & (77.342) & (94.283) & (103.415)\\
+\midrule
+Lags of Oil Prices $\times$ regime & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2\\
+Observations & 262 & 262 & 262 & 262 & 262 & 262\\
+$R^2$ & 0.956 & 0.167 & 0.239 & 0.368 & 0.490 & 0.596\\
+Adjusted $R^2$ & 0.951 & 0.071 & 0.152 & 0.295 & 0.431 & 0.550\\
+Newey-West lags & 0 & 3 & 6 & 12 & 18 & 24\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Notes:} 
+\item Dependent variable: $y_{t+h}-y_t$ for $h>0$ and $y_t$ for $h=0$. Shock: AR(1)-purged pure monetary policy shock extracted from the linear JK (2020) BVAR. $F_{t-1}$ is the logistic transition weight of log GPR ($c=10$, threshold at the median). Newey-West standard errors in parentheses; $^{***}$, $^{**}$, $^{*}$: significant at 1\%, 5\%, 10\%.
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}

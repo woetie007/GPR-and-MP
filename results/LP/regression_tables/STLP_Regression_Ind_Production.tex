@@ -1,0 +1,37 @@
+\begin{table}[!h]
+\centering
+\caption{\label{tab:stlp_ind_production}State-dependent local projection: response of Ind. Production to a pure MP shock}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Horizon (months after the shock)} \\
+\cmidrule(l{3pt}r{3pt}){2-7}
+ & $h=0$ & $h=3$ & $h=6$ & $h=12$ & $h=18$ & $h=24$\\
+\midrule
+Shock $\times F_{t-1}$ (High GPR) & -0.080 & -0.114 & -0.231 & -0.496 & -0.227 & 0.141\\
+ & (0.101) & (0.100) & (0.181) & (0.321) & (0.273) & (0.500)\\
+Shock $\times (1-F_{t-1})$ (Low GPR) & -0.851$^{**}$ & -0.018 & 0.294 & 0.573 & 0.666 & 0.713\\
+ & (0.358) & (0.379) & (0.596) & (0.911) & (0.869) & (0.838)\\
+Difference High $-$ Low & 0.771$^{*}$ & -0.096 & -0.524 & -1.069 & -0.894 & -0.572\\
+ & (0.394) & (0.416) & (0.654) & (1.071) & (0.889) & (0.904)\\
+$F_{t-1}$ (High-GPR constant) & 12.117 & 15.931 & 60.259$^{*}$ & 167.083$^{***}$ & 298.467$^{***}$ & 418.112$^{***}$\\
+ & (10.283) & (19.185) & (33.399) & (38.938) & (68.331) & (92.989)\\
+$1-F_{t-1}$ (Low-GPR constant) & 58.417$^{**}$ & 182.919$^{***}$ & 324.949$^{***}$ & 520.422$^{***}$ & 560.806$^{***}$ & 459.156$^{***}$\\
+ & (24.128) & (55.643) & (101.608) & (148.394) & (144.533) & (150.880)\\
+\midrule
+Lags of Ind. Production $\times$ regime & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2\\
+Observations & 262 & 262 & 262 & 262 & 262 & 262\\
+$R^2$ & 0.881 & 0.197 & 0.298 & 0.426 & 0.477 & 0.507\\
+Adjusted $R^2$ & 0.867 & 0.105 & 0.217 & 0.360 & 0.417 & 0.450\\
+Newey-West lags & 0 & 3 & 6 & 12 & 18 & 24\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Notes:} 
+\item Dependent variable: $y_{t+h}-y_t$ for $h>0$ and $y_t$ for $h=0$. Shock: AR(1)-purged pure monetary policy shock extracted from the linear JK (2020) BVAR. $F_{t-1}$ is the logistic transition weight of log GPR ($c=10$, threshold at the median). Newey-West standard errors in parentheses; $^{***}$, $^{**}$, $^{*}$: significant at 1\%, 5\%, 10\%.
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}

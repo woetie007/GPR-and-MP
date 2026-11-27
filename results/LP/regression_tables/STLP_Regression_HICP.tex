@@ -1,0 +1,37 @@
+\begin{table}[!h]
+\centering
+\caption{\label{tab:stlp_hicp}State-dependent local projection: response of HICP to a pure MP shock}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Horizon (months after the shock)} \\
+\cmidrule(l{3pt}r{3pt}){2-7}
+ & $h=0$ & $h=3$ & $h=6$ & $h=12$ & $h=18$ & $h=24$\\
+\midrule
+Shock $\times F_{t-1}$ (High GPR) & -0.044$^{*}$ & 0.037 & 0.023 & -0.032 & -0.046 & 0.046\\
+ & (0.025) & (0.054) & (0.056) & (0.085) & (0.091) & (0.121)\\
+Shock $\times (1-F_{t-1})$ (Low GPR) & -0.019 & -0.018 & -0.086 & -0.106 & -0.145 & 0.022\\
+ & (0.018) & (0.041) & (0.077) & (0.121) & (0.192) & (0.220)\\
+Difference High $-$ Low & -0.025 & 0.055 & 0.109 & 0.073 & 0.099 & 0.024\\
+ & (0.031) & (0.070) & (0.095) & (0.148) & (0.200) & (0.213)\\
+$F_{t-1}$ (High-GPR constant) & 0.049 & 0.151 & 2.358 & 9.710$^{*}$ & 18.440$^{***}$ & 23.712$^{***}$\\
+ & (0.682) & (1.743) & (3.054) & (5.045) & (5.994) & (6.127)\\
+$1-F_{t-1}$ (Low-GPR constant) & 0.123 & -4.441 & -17.189 & -45.112 & -69.519 & -90.030\\
+ & (1.217) & (6.420) & (16.105) & (39.294) & (61.131) & (78.153)\\
+\midrule
+Lags of HICP $\times$ regime & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2\\
+Observations & 262 & 262 & 262 & 262 & 262 & 262\\
+$R^2$ & 1.000 & 0.369 & 0.396 & 0.343 & 0.300 & 0.279\\
+Adjusted $R^2$ & 1.000 & 0.296 & 0.326 & 0.267 & 0.219 & 0.196\\
+Newey-West lags & 0 & 3 & 6 & 12 & 18 & 24\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Notes:} 
+\item Dependent variable: $y_{t+h}-y_t$ for $h>0$ and $y_t$ for $h=0$. Shock: AR(1)-purged pure monetary policy shock extracted from the linear JK (2020) BVAR. $F_{t-1}$ is the logistic transition weight of log GPR ($c=10$, threshold at the median). Newey-West standard errors in parentheses; $^{***}$, $^{**}$, $^{*}$: significant at 1\%, 5\%, 10\%.
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}

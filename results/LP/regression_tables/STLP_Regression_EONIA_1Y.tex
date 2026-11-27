@@ -1,0 +1,37 @@
+\begin{table}[!h]
+\centering
+\caption{\label{tab:stlp_eonia_1y}State-dependent local projection: response of EONIA/€STR 1Y to a pure MP shock}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Horizon (months after the shock)} \\
+\cmidrule(l{3pt}r{3pt}){2-7}
+ & $h=0$ & $h=3$ & $h=6$ & $h=12$ & $h=18$ & $h=24$\\
+\midrule
+Shock $\times F_{t-1}$ (High GPR) & 0.017 & 0.067 & 0.134 & 0.174 & 0.177 & 0.147\\
+ & (0.020) & (0.058) & (0.092) & (0.123) & (0.131) & (0.134)\\
+Shock $\times (1-F_{t-1})$ (Low GPR) & 0.022 & 0.015 & -0.041 & -0.151$^{*}$ & -0.183$^{**}$ & -0.221$^{**}$\\
+ & (0.021) & (0.024) & (0.051) & (0.091) & (0.089) & (0.103)\\
+Difference High $-$ Low & -0.005 & 0.052 & 0.175 & 0.325$^{**}$ & 0.360$^{**}$ & 0.368$^{***}$\\
+ & (0.030) & (0.065) & (0.107) & (0.147) & (0.145) & (0.141)\\
+$F_{t-1}$ (High-GPR constant) & 0.031$^{**}$ & 0.140$^{**}$ & 0.293 & 0.484 & 0.536 & 0.494\\
+ & (0.013) & (0.061) & (0.182) & (0.365) & (0.440) & (0.459)\\
+$1-F_{t-1}$ (Low-GPR constant) & 0.001 & -0.004 & 0.029 & 0.187 & 0.411 & 0.651\\
+ & (0.010) & (0.023) & (0.061) & (0.172) & (0.361) & (0.554)\\
+\midrule
+Lags of EONIA/€STR 1Y $\times$ regime & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2 & 12 $\times$ 2\\
+Observations & 262 & 262 & 262 & 262 & 262 & 262\\
+$R^2$ & 0.992 & 0.320 & 0.262 & 0.298 & 0.316 & 0.378\\
+Adjusted $R^2$ & 0.991 & 0.242 & 0.177 & 0.217 & 0.237 & 0.306\\
+Newey-West lags & 0 & 3 & 6 & 12 & 18 & 24\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Notes:} 
+\item Dependent variable: $y_{t+h}-y_t$ for $h>0$ and $y_t$ for $h=0$. Shock: AR(1)-purged pure monetary policy shock extracted from the linear JK (2020) BVAR. $F_{t-1}$ is the logistic transition weight of log GPR ($c=10$, threshold at the median). Newey-West standard errors in parentheses; $^{***}$, $^{**}$, $^{*}$: significant at 1\%, 5\%, 10\%.
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
