@@ -16,12 +16,18 @@ source(file.path(PROJECT_DIR, "additional_functions.R"))
 source(file.path(PROJECT_DIR, "ST_LP_functions.R"))
 
 if (!exists("var_data_eff")) {
-  shock_file <- file.path(DIRS$var, "baseline_bvar_structural_mp_shock.csv")
-  if (!file.exists(shock_file)) {
+  shock_rds <- file.path(DIRS$var, "baseline_bvar_structural_mp_shock.rds")
+  shock_csv <- file.path(DIRS$var, "baseline_bvar_structural_mp_shock.csv")
+  if (file.exists(shock_rds)) {
+    message("  using structural MP shock from ", basename(shock_rds))
+    var_data_eff <- readRDS(shock_rds)
+  } else if (file.exists(shock_csv)) {
+    # CSV round-trip can change the last digits (~1e-12) of the estimates
+    message("  using structural MP shock from ", basename(shock_csv))
+    var_data_eff <- read_csv(shock_csv, show_col_types = FALSE)
+  } else {
     stop("No structural MP shock available: run the VAR stage first.")
   }
-  message("  using structural MP shock from ", basename(shock_file))
-  var_data_eff <- read_csv(shock_file, show_col_types = FALSE)
 }
 
 #----------------------------------------------
@@ -213,7 +219,10 @@ for (i in seq_along(ynames)) {
 
 # (2) All horizons in one long table
 all_h <- lp_coefs %>%
-  transmute(Variable = tex_escape(Variable), `$h$` = Horizon,
+  group_by(Variable) %>%
+  mutate(first = row_number() == 1) %>%
+  ungroup() %>%
+  transmute(Variable = ifelse(first, tex_escape(Variable), ""), `$h$` = Horizon,
             `$\\beta_H$` = fmt_coef(b_high, p_high), `s.e.$_H$` = sprintf("%.3f", se_high),
             `$\\beta_L$` = fmt_coef(b_low, p_low),  `s.e.$_L$` = sprintf("%.3f", se_low),
             `$\\beta_H-\\beta_L$` = fmt_coef(diff, p_diff), `s.e.$_{H-L}$` = sprintf("%.3f", se_diff),
@@ -224,10 +233,10 @@ save_tex(
       caption = "State-dependent local projections: shock coefficients at all horizons",
       label = "stlp_all_horizons") %>%
     kable_styling(latex_options = c("repeat_header"), font_size = 8) %>%
-    collapse_rows(columns = 1, latex_hline = "major", valign = "top") %>%
-    footnote(general = paste(
-      "$\\\\beta_H$ and $\\\\beta_L$: response in the high- and low-GPR regime;",
-      "Newey-West standard errors with $h$ lags;",
+    row_spec(which(diff(match(lp_coefs$Variable, ynames)) != 0), hline_after = TRUE) %>%
+    footnote(general = c(
+      "$\\\\beta_H$, $\\\\beta_L$: response in the high- and low-GPR regime.",
+      "Newey-West standard errors with $h$ lags.",
       "$^{***}$, $^{**}$, $^{*}$: significant at 1\\\\%, 5\\\\%, 10\\\\%."),
       escape = FALSE, general_title = "Notes:"),
   reg_dir, "STLP_Regression_All_Horizons"

@@ -387,6 +387,8 @@ for (j in jobs) {
             plot.caption = element_text(face = "italic", size = 10, color = "gray30"),
             panel.grid.minor = element_blank())
     write_csv(r$var_data_eff, file.path(out, "baseline_bvar_structural_mp_shock.csv"))
+    # exact binary copy, used when the LP stage is run on its own
+    saveRDS(r$var_data_eff, file.path(out, "baseline_bvar_structural_mp_shock.rds"))
     desc <- "Linear JK (2020) BVAR, sign restrictions"
   } else if (j$type == "st") {
     p <- plot_st_irf(r$plot_data, j$y,
@@ -395,7 +397,7 @@ for (j in jobs) {
                      T_eff = r$T_eff, P = r$P)
     desc <- sprintf("ST-BVAR, %s (threshold %s, c = %g, gamma = %s)", j$desc,
                     sub("Log_", "", j$thresh), j$c,
-                    if (is.null(j$gq)) "median" else paste0(100 * j$gq, "\\%"))
+                    if (is.null(j$gq)) "median" else paste0(100 * j$gq, "%"))
   } else {
     p <- plot_st_irf(r$plot_data, unique(as.character(r$plot_data$Variable)),
                      title = "State-Dependent Responses to a Monetary Policy Shock",
@@ -412,12 +414,14 @@ for (j in jobs) {
 model_overview <- bind_rows(model_info)
 write_csv(model_overview, file.path(out, "model_overview.csv"))
 save_xtable(
-  xtable(model_overview %>% select(-Minutes) %>% mutate(Figure = gsub("_", "\\\\_", Figure)),
+  xtable(model_overview %>% select(-Minutes) %>%
+           mutate(across(c(Figure, Model), ~ gsub("([%&_#$])", "\\\\\\1", .x))),
          caption = sprintf("Estimated BVAR specifications (Gibbs sampler: %d burn-in, %d saved draws, every 4th draw kept; 68\\%% bands)",
                            BVAR_BURNIN, BVAR_NDRAWS),
-         label = "tab:var_models", align = "lllrrr"),
+         label = "tab:var_models", align = c("l", "l", "p{6cm}", "r", "r", "r"),
+         digits = 0),
   out, "VAR_Model_Overview", include.rownames = FALSE,
-  sanitize.text.function = identity, size = "\\footnotesize"
+  sanitize.text.function = identity, size = "\\scriptsize"
 )
 
 # Hand the structural shock to the LP stage
@@ -464,13 +468,13 @@ coef_table_tex <- function(ps, regime, title, label, Nm) {
                   repeat_header_continued = "\\textit{(continued on next page)}") %>%
     add_header_above(c(" " = 1, "Equation (dependent variable)" = length(eqs))) %>%
     row_spec(2 * nrow(cf$median), hline_after = TRUE) %>%
-    footnote(general = paste(
+    footnote(general = c(
       "Posterior medians with posterior standard deviations in parentheses.",
       "$^{**}$ / $^{*}$: the 90\\\\% / 68\\\\% posterior credible interval excludes zero.",
-      "The equations of the high-frequency surprises (OIS 3M, STOXX50) are block-exogenous:",
+      "The surprise equations (OIS 3M, STOXX50) are block-exogenous:",
       "their lag coefficients and constants are restricted to zero.",
       "Minnesota prior with tightness 0.2 and lag decay 1."),
-      escape = FALSE, general_title = "Notes:", threeparttable = TRUE)
+      escape = FALSE, general_title = "Notes:")
 }
 
 # Structural impact responses (median and 68% band) for each regime
