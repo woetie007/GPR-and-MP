@@ -144,6 +144,32 @@ regime_irfs <- function(irf_low, irf_high, data_names, ynames) {
 }
 
 #==============================================================================
+# Posterior summaries for the regression tables (computed inside each worker,
+# uses no random numbers, so it does not affect the estimates)
+#==============================================================================
+posterior_summary <- function(res, irfs, data_names, weights = NULL, T_eff) {
+  N <- length(data_names)
+  P <- res$lags
+  # rows of beta: lag 1 (all variables), ..., lag P, constant
+  regressors <- c(paste0(rep(data_names, P), " (t-", rep(1:P, each = N), ")"), "Constant")
+  q <- function(a, pr) apply(a, c(1, 2), quantile, probs = pr, na.rm = TRUE)
+  bd <- res$beta_draws
+  coef <- list(median = apply(bd, c(1, 2), median), sd = apply(bd, c(1, 2), sd),
+               q05 = q(bd, 0.05), q16 = q(bd, 0.16), q84 = q(bd, 0.84), q95 = q(bd, 0.95))
+  coef <- lapply(coef, function(m) { dimnames(m) <- list(regressors, data_names); m })
+  sigma_med <- apply(res$sigma_draws, c(1, 2), median)
+  dimnames(sigma_med) <- list(data_names, data_names)
+  imp <- irfs[, 1:2, 1, , drop = FALSE]          # impact responses to shocks 1 and 2
+  impact <- lapply(c(q16 = 0.16, median = 0.5, q84 = 0.84), function(pr) {
+    m <- apply(imp, c(1, 2), quantile, probs = pr, na.rm = TRUE)
+    dimnames(m) <- list(data_names, c("Shock 1", "Shock 2")); m
+  })
+  list(coef = coef, sigma = sigma_med, impact = impact, T_eff = T_eff,
+       eff_obs = if (is.null(weights)) T_eff else sum(weights),
+       n_draws = sum(!is.na(irfs[1, 1, 1, ])))
+}
+
+#==============================================================================
 # 1) Linear JK (2020) BVAR, sample 2000-2025 (Figure C1)
 #    Also delivers the structural pure MP shock used in the local projections.
 #==============================================================================
@@ -182,7 +208,9 @@ run_linear_bvar <- function(seed) {
   var_data_eff <- var_data[(P + 1):nrow(var_data), ]
   var_data_eff$`Pure MP Shock` <- apply(shock_draws, 1, median, na.rm = TRUE)
 
-  list(plot_data = plot_data, T_eff = T_eff, P = P, var_data_eff = var_data_eff)
+  list(plot_data = plot_data, T_eff = T_eff, P = P, var_data_eff = var_data_eff,
+       posterior = list(Linear = posterior_summary(res, irfs_draws, data_names, T_eff = T_eff)),
+       shock_names = c("Pure MP", "CB information"))
 }
 
 #==============================================================================
@@ -254,9 +282,14 @@ run_st_bvar <- function(m, seed) {
   cat("\nApplying Sign Restrictions - High GPR Regime...\n")
   irf_high <- resirfssign(res_high, MAlags, dims, test_restr, rep(1, N), max_try)
 
+  T_eff <- nrow(Y_matrix) - P
   list(plot_data = regime_irfs(irf_low, irf_high, data_names, m$y),
-       T_eff = nrow(Y_matrix) - P, P = P,
-       sample = range(var_data$Date), gamma = unname(gamma))
+       T_eff = T_eff, P = P,
+       sample = range(var_data$Date), gamma = unname(gamma),
+       posterior = list(
+         `Low GPR`  = posterior_summary(res_low,  irf_low,  data_names, w$F_low,  T_eff),
+         `High GPR` = posterior_summary(res_high, irf_high, data_names, w$F_high, T_eff)),
+       shock_names = c("Pure MP", "CB information"))
 }
 
 #==============================================================================
@@ -290,8 +323,15 @@ run_chol_st_bvar <- function(seed) {
     irfs
   }
   cat("Computing State-Dependent Cholesky IRFs...\n")
-  list(plot_data = regime_irfs(chol_irfs(res_low), chol_irfs(res_high), data_names, ynames),
-       T_eff = nrow(Y_matrix) - P, P = P)
+  irf_low  <- chol_irfs(res_low)
+  irf_high <- chol_irfs(res_high)
+  T_eff <- nrow(Y_matrix) - P
+  list(plot_data = regime_irfs(irf_low, irf_high, data_names, ynames),
+       T_eff = T_eff, P = P,
+       posterior = list(
+         `Low GPR`  = posterior_summary(res_low,  irf_low,  data_names, w$F_low,  T_eff),
+         `High GPR` = posterior_summary(res_high, irf_high, data_names, w$F_high, T_eff)),
+       shock_names = c("OIS 3M (Cholesky, ordered first)", "STOXX50 (Cholesky, ordered second)"))
 }
 
 #==============================================================================
@@ -382,3 +422,109 @@ save_xtable(
 
 # Hand the structural shock to the LP stage
 var_data_eff <- var_results[["FigureC1_Linear_BVAR_Baseline"]]$var_data_eff
+
+#==============================================================================
+# Regression tables: posterior reduced-form coefficients and impact responses
+#==============================================================================
+reg_dir <- file.path(out, "regression_tables")
+dir.create(reg_dir, showWarnings = FALSE)
+
+tex_escape <- function(x) {
+  x <- gsub("\\\\", "\\\\textbackslash{}", x)
+  gsub("([%&_#$])", "\\\\\\1", x)
+}
+cred_mark <- function(lo68, hi68, lo90, hi90) {
+  ifelse(lo90 > 0 | hi90 < 0, "$^{**}$", ifelse(lo68 > 0 | hi68 < 0, "$^{*}$", ""))
+}
+
+# Long table of posterior medians (posterior s.d.) for the macro equations
+coef_table_tex <- function(ps, regime, title, label, Nm) {
+  cf <- ps$coef
+  eqs <- colnames(cf$median)[(Nm + 1):ncol(cf$median)]   # surprise equations are block-exogenous
+  rows <- list()
+  for (r in rownames(cf$median)) {
+    est <- sprintf("%.3f%s", cf$median[r, eqs],
+                   cred_mark(cf$q16[r, eqs], cf$q84[r, eqs], cf$q05[r, eqs], cf$q95[r, eqs]))
+    rows[[length(rows) + 1]] <- c(tex_escape(r), est)
+    rows[[length(rows) + 1]] <- c("", sprintf("(%.3f)", cf$sd[r, eqs]))
+  }
+  foot <- list(
+    c("Observations ($T$)", rep(as.character(ps$T_eff), length(eqs))),
+    c("Effective observations ($\\sum$ weights)", rep(sprintf("%.1f", ps$eff_obs), length(eqs))),
+    c("Residual s.d. (posterior median)", sprintf("%.3f", sqrt(diag(ps$sigma))[eqs])),
+    c("Saved posterior draws", rep(as.character(gssettings$ndraws), length(eqs)))
+  )
+  tab <- as.data.frame(do.call(rbind, c(rows, foot)), stringsAsFactors = FALSE)
+  colnames(tab) <- c("Regressor", tex_escape(eqs))
+  kbl(tab, format = "latex", booktabs = TRUE, escape = FALSE, longtable = TRUE,
+      align = c("l", rep("c", length(eqs))), linesep = "",
+      caption = sprintf("%s: posterior reduced-form coefficients (%s)", tex_escape(title), regime),
+      label = label) %>%
+    kable_styling(latex_options = "repeat_header", font_size = 7,
+                  repeat_header_continued = "\\textit{(continued on next page)}") %>%
+    add_header_above(c(" " = 1, "Equation (dependent variable)" = length(eqs))) %>%
+    row_spec(2 * nrow(cf$median), hline_after = TRUE) %>%
+    footnote(general = paste(
+      "Posterior medians with posterior standard deviations in parentheses.",
+      "$^{**}$ / $^{*}$: the 90\\\\% / 68\\\\% posterior credible interval excludes zero.",
+      "The equations of the high-frequency surprises (OIS 3M, STOXX50) are block-exogenous:",
+      "their lag coefficients and constants are restricted to zero.",
+      "Minnesota prior with tightness 0.2 and lag decay 1."),
+      escape = FALSE, general_title = "Notes:", threeparttable = TRUE)
+}
+
+# Structural impact responses (median and 68% band) for each regime
+impact_table_tex <- function(r, title, label) {
+  vars <- rownames(r$posterior[[1]]$impact$median)
+  cols <- list(); hdr <- c(" " = 1)
+  for (reg in names(r$posterior)) {
+    im <- r$posterior[[reg]]$impact
+    for (k in 1:2) {
+      cols[[paste(reg, k)]] <- sprintf("%.3f [%.3f, %.3f]", im$median[, k], im$q16[, k], im$q84[, k])
+    }
+    hdr <- c(hdr, setNames(2, reg))
+  }
+  tab <- data.frame(Variable = tex_escape(vars), cols, check.names = FALSE)
+  colnames(tab) <- c("Variable", rep(r$shock_names, length(r$posterior)))
+  if (length(r$posterior) == 1) hdr <- NULL
+  k <- kbl(tab, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "",
+           align = c("l", rep("c", ncol(tab) - 1)),
+           caption = sprintf("%s: structural impact responses", tex_escape(title)),
+           label = label) %>%
+    kable_styling(latex_options = c("hold_position", "scale_down"), font_size = 8)
+  if (!is.null(hdr)) k <- add_header_above(k, hdr)
+  footnote(k, general = paste(
+    "Posterior median impact response ($h=0$) to a one-standard-deviation shock,",
+    "68\\\\% credible band in brackets."),
+    escape = FALSE, general_title = "Notes:", threeparttable = TRUE)
+}
+
+for (j in jobs) {
+  r <- var_results[[j$file]]
+  title <- switch(j$type,
+                  linear = "Linear JK (2020) BVAR",
+                  st     = sprintf("ST-BVAR (%s)", j$desc),
+                  chol   = "ST-BVAR with standard HFI (Cholesky)")
+  parts <- c(sprintf("%% Regression tables for %s (%s)", j$file, title), "")
+  for (reg in names(r$posterior)) {
+    parts <- c(parts,
+               coef_table_tex(r$posterior[[reg]], reg, title,
+                              paste0("var_coef_", tolower(gsub("[^A-Za-z0-9]", "", paste(j$file, reg)))),
+                              Nm = length(mnames)),
+               "")
+  }
+  parts <- c(parts, impact_table_tex(r, title,
+                                     paste0("var_impact_", tolower(gsub("[^A-Za-z0-9]", "", j$file)))))
+  save_tex(parts, reg_dir, paste0(j$file, "_Regression"))
+
+  # Machine-readable version of the coefficient summaries
+  coef_long <- bind_rows(lapply(names(r$posterior), function(reg) {
+    cf <- r$posterior[[reg]]$coef
+    bind_rows(lapply(names(cf), function(stat) {
+      as.data.frame(as.table(cf[[stat]]), stringsAsFactors = FALSE) %>%
+        setNames(c("Regressor", "Equation", "Value")) %>% mutate(Statistic = stat)
+    })) %>% mutate(Regime = reg)
+  })) %>%
+    pivot_wider(names_from = Statistic, values_from = Value)
+  write_csv(coef_long, file.path(reg_dir, paste0(j$file, "_coefficients.csv")))
+}

@@ -21,6 +21,7 @@ run_st_lp <- function(data, target_var, shock_var, gpr_var, p_lags = 4, horizon 
   end_idx <- T_total - horizon
   
   results_list <- list()
+  fit_details  <- list()
   
   # 2. Horizon-by-Horizon Estimation Loop
   for (h in 0:horizon) {
@@ -73,6 +74,18 @@ run_st_lp <- function(data, target_var, shock_var, gpr_var, p_lags = 4, horizon 
     beta_low  <- if("X_matrixshock_low" %in% names(coefs)) coefs["X_matrixshock_low"] else NA
     se_low    <- if("X_matrixshock_low" %in% names(coefs)) nw_se["X_matrixshock_low"] else NA
     
+    # Keep the regression details for the regression tables (does not change the IRFs)
+    # F_high + F_low = 1 acts as the intercept, so use the centred R-squared
+    # (summary.lm would report the uncentred one for a model without intercept)
+    n_obs <- length(y_dep)
+    k_par <- sum(!is.na(coefs))
+    r2    <- 1 - sum(residuals(fit)^2) / sum((y_dep - mean(y_dep))^2)
+    fit_details[[h + 1]] <- list(
+      horizon = h, coef = coefs, vcov_nw = nw_vcov, nobs = n_obs,
+      r2 = r2, adj_r2 = 1 - (1 - r2) * (n_obs - 1) / (n_obs - k_par),
+      nw_lag = h, n_controls = 2 * p_lags
+    )
+    
     results_list[[h + 1]] <- data.frame(
       Horizon = h,
       Variable = target_var,
@@ -85,5 +98,7 @@ run_st_lp <- function(data, target_var, shock_var, gpr_var, p_lags = 4, horizon 
     )
   }
   
-  return(do.call(rbind, results_list))
+  out <- do.call(rbind, results_list)
+  attr(out, "fits") <- fit_details
+  return(out)
 }

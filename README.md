@@ -11,7 +11,9 @@ Rscript run_pipeline.R
 ```
 
 This runs every stage end to end and writes the results to `results/`,
-grouped by subject. Tables are LaTeX (`.tex`), figures are PNG (300 dpi) and PDF.
+grouped by subject. Tables are LaTeX (`.tex`), figures are PNG (300 dpi) and PDF. The tables need a
+few LaTeX packages: add `\input{results/latex_preamble.tex}` to the preamble of
+your document and include a table with `\input{results/.../Table.tex}`.
 
 | Folder | Content | Thesis |
 |---|---|---|
@@ -19,7 +21,9 @@ grouped by subject. Tables are LaTeX (`.tex`), figures are PNG (300 dpi) and PDF
 | `results/unit_root/` | ADF / Lee-Strazicich tests, Bai-Perron breaks, series and break plots, full test output | Tables A2–A3 |
 | `results/shock_diagnostics/` | ADF / ARCH / exogeneity tests, Ljung-Box tables, shock correlations | Tables A4–A5; Figure A1 |
 | `results/VAR/` | linear BVAR, baseline ST-BVAR, all robustness ST-BVARs, Cholesky ST-BVAR (+ IRF data as CSV) | Figures 1, 2, C1–C21 |
+| `results/VAR/regression_tables/` | per model: posterior reduced-form coefficients by regime (median, posterior s.d., 68%/90% credible-interval markers) and structural impact responses | |
 | `results/LP/` | state-dependent local projection (+ coefficient table) | Figure 3 |
+| `results/LP/regression_tables/` | LP regressions per variable (selected horizons) and all horizons: shock coefficients by regime, High − Low difference, Newey-West s.e., N, R² | |
 | `results/logs/` | console log of every stage, timings, `sessionInfo()` | |
 
 ### Options
